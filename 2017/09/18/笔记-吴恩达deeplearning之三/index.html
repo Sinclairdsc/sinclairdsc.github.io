@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sinclairdsc.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在训练神经网络时，我们需要做出很多决策。例如神经网络的层数，含多少个隐藏单元，学习率的值，各层激活函数的选择，一开始不可能预测出这些参数的准确信息。实际上，应用型机器学习是一个高度迭代的过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笔记-吴恩达deeplearning之三">
+<meta property="og:url" content="http://sinclairdsc.github.io/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/index.html">
+<meta property="og:site_name" content="Sinclaird Blog">
+<meta property="og:description" content="在训练神经网络时，我们需要做出很多决策。例如神经网络的层数，含多少个隐藏单元，学习率的值，各层激活函数的选择，一开始不可能预测出这些参数的准确信息。实际上，应用型机器学习是一个高度迭代的过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_1.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_2.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_3.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_4.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_5.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_6.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170918_7.JPG">
+<meta property="article:published_time" content="2017-09-18T09:06:10.000Z">
+<meta property="article:modified_time" content="2021-11-28T14:48:50.062Z">
+<meta property="article:author" content="Sinclaired">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sinclairdsc.github.io/assets/images/170918_1.JPG">
+
+<link rel="canonical" href="http://sinclairdsc.github.io/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>笔记-吴恩达deeplearning之三 | Sinclaird Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sinclaird Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Things do not change, we do.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://sinclairdsc.github.io/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Sinclaired">
+      <meta itemprop="description" content="自言自语">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sinclaird Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          笔记-吴恩达deeplearning之三
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-18 17:06:10" itemprop="dateCreated datePublished" datetime="2017-09-18T17:06:10+08:00">2017-09-18</time>
+            </span>
+
+          
+            <span id="/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/" class="post-meta-item leancloud_visitors" data-flag-title="笔记-吴恩达deeplearning之三" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/09/18/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%B8%89/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在训练神经网络时，我们需要做出很多决策。<br>例如神经网络的层数，含多少个隐藏单元，学习率的值，各层激活函数的选择，一开始不可能预测出这些参数的准确信息。<br>实际上，应用型机器学习是一个高度迭代的过程。</p>
+<span id="more"></span>
+<h1 id="偏差和方差"><a href="#偏差和方差" class="headerlink" title="偏差和方差"></a>偏差和方差</h1><p>关于深度学习的误差问题，趋势上是分别考虑偏差和方差，越来越少谈及偏差和方差的权衡问题。<br><img src="/assets/images/170918_1.JPG"><br>假设这是数据集，如果拟合一条直线，可能得到一个Logistic回归拟合，如左图，但它并不能很好的拟合该数据集，这种情况偏差较高，称之为“欠拟合”。相反，如果我们拟合一个非常复杂的分类器，比如神经网络，或许非常适合这个数据集，如有图，但看起也不是一种好的拟合方式，分类器方差较高，数据过度拟合。在两者间，或许还有一些如中间这样，复杂度适中，数据拟合适度的分类器，称之为“适度拟合”。</p>
+<p>如此这样只有x1和x2两个特征的二维数据集中，我们可以将偏差和方差可视化。但在多维数据集中，绘制数据和可视化分割边界无法实现，但我们能通过几个指标，来研究偏差和方差。<br><img src="/assets/images/170918_2.JPG"><br>沿用猫图分类的例子，理解偏差和方差的两个关键数据是训练集误差和验证集误差。基于人眼辨别的错误率接近0%为基准：<br>假定训练集错误率是1%，验证集错误率是11%，可以看出，训练集设置的很好，而验证集设置相对较差，这种情况，称之为“高方差”。<br>假定训练集错误率是15%，验证集错误率是16%，算法并没有在训练集中得到很好的训练，这种情况称之为“高偏差”。<br>假定训练集错误率是15%，验证集错误率是30%，这种情况下，算法偏差高，方差也很高。<br>假定训练集错误率是0.5%，验证集错误率是1%，这种情况偏差和方差都很低。  </p>
+<h1 id="训练神经网络的基本方法"><a href="#训练神经网络的基本方法" class="headerlink" title="训练神经网络的基本方法"></a>训练神经网络的基本方法</h1><p>在初始模型完成后，首先检查算法的偏差情况，如果偏差高，则试着评估训练集的性能。如果偏差非常高，甚至无法拟合训练集，那将要选择一个新的网络，比如增加更多隐层、花费更多训练时间、采用更先进的优化算法等。</p>
+<p>一旦偏差降低到可接受范围，检查方差的情况，为了评估方差，需要查看验证集性能。如果方差高，最好的解决方案就是采用更多的数据，但有时无法获得更多数据时，也可以尝试正则化来减少过拟合。</p>
+<p>在机器学习初期阶段，关于所谓的偏差方差权衡的讨论屡见不鲜，因为，我们有很多方法，可以增加偏差、减少方差，也可以减少偏差、减少方差。<br>但深度学习的早期阶段，我们没有太多工具可以做到只减少偏差或只减少方差，却不影响到另外一方。<br>而现如今在深度学习和大数据时代，我们有工具可以做到在减少偏差的同时，不对另一方产生过多不良影响。<br>这就是深度学习对监督学习大有裨益的一个重要原因，也是我们不用太过于关注如何平衡偏差和方差的一个重要原因。</p>
+<p>总之，就是不断重复尝试，直到找到一个低偏差，低方差的框架，我们就会得到一个非常规范化的网络。</p>
+<h1 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h1><p>神经网络过度拟合数据，就会存在高方差的问题，那么最先想到的解决方法可能就是正则化。<br>另一个解决方法是准备更多的数据，这也是很可行的方法。</p>
+<h3 id="L2正则化"><a href="#L2正则化" class="headerlink" title="L2正则化"></a>L2正则化</h3><p>以Logistic回归为例，在逻辑回归函数中加入正则化，添加正则化参数\lambda，该参数常用验证集来配置。<br>J(w,b)=\frac{1}{m} \sum_{i=1}^m l(\hat{y}^{(i)},y^{(i)})+\frac{\lambda}{2m}||w||_2^2</p>
+<p>此方法称L2正则化，是最常见的正则化类型。因为w通常是一个高维参数矢量，已经可以表达高偏差问题，而b仅是一个实数，所以b常忽略不计。</p>
+<p>以神经网络为例，实现正则化，成本函数包含w^{[1]},b^{[1]}到w^{[L]},b^{[L]}所有参数<br>J(w^{[1]},b^{[1]}…w^{[L]},b^{[L]})<br>=\frac{1}{m} \sum_{i=1}^m l(\hat{y}^{(i)},y^{(i)})        </p>
+<p>+\frac{\lambda}{2m} \sum_{L=1}^L ||W^{[L]}||_F^2</p>
+<p>该矩阵范数被称为“弗罗贝尼乌斯范数”，用下标F表示，它表示一个矩阵中所有元素的平方和。</p>
+<p>在弗罗贝尼乌斯范数中，假设正则化\lambda设置的足够大，那么权重矩阵W^{[L]}将会非常接近于0，即大大减少了隐藏单元的影响，将使神经网络变得很小，但深度很大，它会使网络从过拟合状态变为高偏差状态，但由于有\lambda的存在，于是网络会接近于中间状态。</p>
+<h3 id="dropout正则化"><a href="#dropout正则化" class="headerlink" title="dropout正则化"></a>dropout正则化</h3><p><img src="/assets/images/170918_3.JPG"><br>将神经网络复制到右侧，dropout正则化会遍历网络中每一层的每个节点，并在每一个节点上设置消除神节点的概率，假设网络中的每一节点都以抛硬币的方式设置概率，那么每一节点的被保留和被消除的概率都是0.5，设置完节点概率后，我们随机消除掉一些节点，并且删除该节点上的连线，最后我们将得到一个节点更少，规模更小的网络，之后对这个简化后的网络进行训练即可。</p>
+<p>实施dropout的结果是它会压缩权重，并完成一些预防过拟合的外层正则化。</p>
+<p>在测试阶段不适用dropout，因为在测试阶段预测时应用dropout函数，预测会受到干扰。</p>
+<h4 id="inverted-dropout"><a href="#inverted-dropout" class="headerlink" title="inverted dropout"></a>inverted dropout</h4><p>以一个三层网络为例：<br><img src="/assets/images/170918_4.JPG"><br>首先定义向量d^3，表示一个三层的dropout向量，每个样本和每个隐藏单元在d^3中对应的值为1的概率都是keep-prob的值，设为0.8。<br>之后从第三层中获取激活函数a^3，等于上面的a^3乘以d^3，其为元素相乘。作用是过滤d^3中所有等于0的元素。<br>最后我们向外扩展a^3，用它除以0.8或keep-prob的值。</p>
+<p>它的功能是，不论keep-prob的值是多少，都可以确保a^3的期望值不变。</p>
+<h3 id="其他正则化方法"><a href="#其他正则化方法" class="headerlink" title="其他正则化方法"></a>其他正则化方法</h3><p>除了L2正则化、dropout正则化，还有几种方法可以减少神经网络的过拟合。</p>
+<h4 id="数据扩增"><a href="#数据扩增" class="headerlink" title="数据扩增"></a>数据扩增</h4><p>比如以图片作为训练集，通过水平翻转图片(当然也可以进行截取),以扩充训练集，使训练集可以增大一倍，因为训练集有冗余，所以效果不如额外手机一组新图片那么好，但节省了获取图片的花费。<br>以这种方式，可以扩增算法数据，进而正则化数据集，减少过拟合。</p>
+<h4 id="early-stoping"><a href="#early-stoping" class="headerlink" title="early stoping"></a>early stoping</h4><p>还有一种方法叫early stopping<br><img src="/assets/images/170918_5.JPG"><br>运行梯度下降时，我们可以画出成本函数J的训练趋势，还可以绘制出验证集误差，它可以是验证集上的分类误差，如图，验证集误差通常会先呈下降趋势，然后在某个节点处开始上升。</p>
+<p>在训练初期，w值相对很小，所以在长期训练神经网络的过程中，w的值会越变越大，early stopping的作用就是在中间点停止迭代过程，我们将得到一个w值中等大小的弗罗贝尼乌斯范数。</p>
+<p>该方法的主要缺点是，在机器学习过程中，不能独立的处理优化成本函数J和正则化这两个问题。</p>
+<h1 id="梯度消失-梯度爆炸"><a href="#梯度消失-梯度爆炸" class="headerlink" title="梯度消失(梯度爆炸)"></a>梯度消失(梯度爆炸)</h1><p>在训练深度网络时，导数或坡度有时会变得非常大，或非常小，这加大了训练的难度。<br><img src="/assets/images/170918_6.JPG"><br>假设正在训练这样一个极深的神经网络，为了简化，令b为0，且使用线性激活函数g(z)=z<br>那么输出\hat{y}=w^{[L]}w^{[L-1]}w^{[L-2]}…w^{[1]}x，（w^{[1]}x=z^{[1]}=a^{[1]}）</p>
+<p>通过推理，假设每个矩阵都大于或小于1，哪怕仅大一点点，或小一点点，激活函数将以指数级增长或递减，\hat{y}的值将会变得极大或极小，从而导致训练难度上升。<br>尤其当梯度下降步长较小时，将会花费很长时间来学习。 </p>
+<h4 id="权重初始化"><a href="#权重初始化" class="headerlink" title="权重初始化"></a>权重初始化</h4><p>针对该问题，有一不完整的解决方案，虽不能彻底解决问题，却很有用。<br>有助于我们为神经网络更谨慎的选择随机初始化参数。</p>
+<p>当只有一个神经元时，有若干输入特征向量,<br>则z为若干个w_ix_i之和，此处令b=0暂且忽略</p>
+<p>为了防止预测z值过大或过小，可以看到当n越大时，希望w_{[i]}越小，<br>最合理的方法就是设置Var(W_i)=1/n，n表示神经元的输入特征数量<br>实际上要做的就是设置某层权重矩阵W，</p>
+<p>W^{[L]}=np.random.randn(shape)*np.sqrt(\frac{1}{n^{[L-1]}})</p>
+<p>如果使用的是Relu激活函数，而不是1/n，方差Var(W_i)设置为2/n效果更好<br>初始化时，尤其使用Relu激活函数时，它取决于你对随机变量的熟悉程度</p>
+<p>因为它给权重矩阵W设置了合理值，不能比1大很多，也不能比1小很多，所以梯度没有爆炸或消失过快，它确实降低了坡度消失和爆炸问题。</p>
+<h1 id="梯度检验"><a href="#梯度检验" class="headerlink" title="梯度检验"></a>梯度检验</h1><p>在实施backprop时，有一个测试叫做梯度检验，为了确保backprop正确实施，为了实现梯度检验，首先谈谈如何对计算梯度做数值逼近</p>
+<h3 id="数值逼近"><a href="#数值逼近" class="headerlink" title="数值逼近"></a>数值逼近</h3><p><img src="/assets/images/170918_7.JPG"><br>函数标记为f(\theta)，f=(\theta)=\theta ^3<br>假设\theta=1，不增大\theta的值，而是在\theta右侧设置一个\theta +\varepsilon，在左侧设置一个\theta -\varepsilon，<br>如图，大三角形的高宽比值更接近于\theta的导数，将右上角的三角形下移，这个大三角形同时考虑了这两个小三角形</p>
+<p>所以我们得到的不是一个单边公差而是一个双边公差，<br>故高宽比值为:\frac{f(\theta +\varepsilon)-f(\theta -\varepsilon)}{2\varepsilon}，它的期望值接近g(\theta)</p>
+<h3 id="梯度检验-1"><a href="#梯度检验-1" class="headerlink" title="梯度检验"></a>梯度检验</h3><p>假设网络中含有W^{[1]},b^{[1]},…,W^{[L]},b^{[L]}，为了执行梯度检验，首先将所有参数转换成一个巨大的向量数据，得到巨型向量\theta，得到成本函数J(\theta)</p>
+<p>接着得到W和b顺序相同的dW^{[1]},db^{[1]},…,dW^{[L]},db^{[L]}数据，用他们来初始化大项量d\theta，它与\theta具有相同维度，经过相同的转换和连接运算操作后，可将所有导数转换成一个大向量d\theta</p>
+<p>J是一个超级参数\theta的函数，<br>为了实施梯度检验，需要循环执行：<br>d\theta _{approx}^{[i]}=\frac{J(\theta _1,\theta _2,…,\theta _i+\varepsilon,…)-J(\theta _1,\theta _2,…,\theta _i-\varepsilon,…)}{2\varepsilon}</p>
+<p>这个值应该逼近d\theta ^{[i]}<br>需要对每个i的每个值都执行这个运算，最后得到两个向量，<br>d\theta和其逼近值d\theta _{approx}，它与d\theta维度相同<br>需要验证的就是这些向量是否彼此接近</p>
+<p>判断向量是否接近时，通常：<br>计算两个向量的距离，|| d\theta _{approx}-d\theta || _2，  </p>
+<p>之后用向量长度做归一化<br>分母只是预防向量太大或太小，使这个方程变成比率</p>
+<p>如果计算方程得到的值为10^{-7}或更小，则意味着导数逼近很可能是正确的。<br>如果值在10^{-5}范围内，就需要注意是否某个值过大。<br>如果值在10^{-3}范围内，就需要注意是否存在bug。</p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>首先，不要在训练中使用梯度检验，它只是用于调试<br>第二，如果算法的梯度检验失败，要检查所有项，试着找出bug<br>第三，在实施梯度检验时，如果使用正则化，请注意正则化<br>第四，梯度检验不能与dropout同时使用<br>第五，在随机初始化过程中，先运行梯度检验，然后再训练网络</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/09/13/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%8C/" rel="prev" title="笔记-吴恩达deeplearning之二">
+      <i class="fa fa-chevron-left"></i> 笔记-吴恩达deeplearning之二
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/09/19/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E5%9B%9B/" rel="next" title="笔记-吴恩达deeplearning之四">
+      笔记-吴恩达deeplearning之四 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%81%8F%E5%B7%AE%E5%92%8C%E6%96%B9%E5%B7%AE"><span class="nav-number">1.</span> <span class="nav-text">偏差和方差</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">训练神经网络的基本方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#L2%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">3.0.1.</span> <span class="nav-text">L2正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout%E6%AD%A3%E5%88%99%E5%8C%96"><span class="nav-number">3.0.2.</span> <span class="nav-text">dropout正则化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#inverted-dropout"><span class="nav-number">3.0.2.1.</span> <span class="nav-text">inverted dropout</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%AD%A3%E5%88%99%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-number">3.0.3.</span> <span class="nav-text">其他正则化方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%89%A9%E5%A2%9E"><span class="nav-number">3.0.3.1.</span> <span class="nav-text">数据扩增</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#early-stoping"><span class="nav-number">3.0.3.2.</span> <span class="nav-text">early stoping</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%B6%88%E5%A4%B1-%E6%A2%AF%E5%BA%A6%E7%88%86%E7%82%B8"><span class="nav-number">4.</span> <span class="nav-text">梯度消失(梯度爆炸)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%83%E9%87%8D%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">权重初始化</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%A3%80%E9%AA%8C"><span class="nav-number">5.</span> <span class="nav-text">梯度检验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E9%80%BC%E8%BF%91"><span class="nav-number">5.0.1.</span> <span class="nav-text">数值逼近</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A2%AF%E5%BA%A6%E6%A3%80%E9%AA%8C-1"><span class="nav-number">5.0.2.</span> <span class="nav-text">梯度检验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.0.3.</span> <span class="nav-text">注意事项</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sinclaired"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Sinclaired</p>
+  <div class="site-description" itemprop="description">自言自语</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:sinclairdsc@gmail.com" title="E-Mail → mailto:sinclairdsc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/sinsclairdsc" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;sinsclairdsc" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinclaired</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'cfnbMzAmH45nnAc6GBxQKdO7-gzGzoHsz',
+      appKey     : 'F7PrRb1wkPqMTESyXNYe7Ofr',
+      placeholder: "欢迎评论！",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

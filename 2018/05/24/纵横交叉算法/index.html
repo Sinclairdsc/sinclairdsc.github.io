@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sinclairdsc.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="纵横交叉算法是一种新型的群体智能搜索算法，据知网可查，该算法好像由2014年出自广东工业大学。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="纵横交叉算法">
+<meta property="og:url" content="http://sinclairdsc.github.io/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Sinclaird Blog">
+<meta property="og:description" content="纵横交叉算法是一种新型的群体智能搜索算法，据知网可查，该算法好像由2014年出自广东工业大学。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180524_1.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180524_2.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180524_3.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180524_4.jpg">
+<meta property="article:published_time" content="2018-05-24T07:15:47.000Z">
+<meta property="article:modified_time" content="2021-11-08T00:00:42.554Z">
+<meta property="article:author" content="Sinclaired">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sinclairdsc.github.io/assets/images/180524_1.jpg">
+
+<link rel="canonical" href="http://sinclairdsc.github.io/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>纵横交叉算法 | Sinclaird Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sinclaird Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Things do not change, we do.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://sinclairdsc.github.io/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Sinclaired">
+      <meta itemprop="description" content="自言自语">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sinclaird Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          纵横交叉算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-05-24 15:15:47" itemprop="dateCreated datePublished" datetime="2018-05-24T15:15:47+08:00">2018-05-24</time>
+            </span>
+
+          
+            <span id="/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/" class="post-meta-item leancloud_visitors" data-flag-title="纵横交叉算法" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/05/24/%E7%BA%B5%E6%A8%AA%E4%BA%A4%E5%8F%89%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/assets/images/180524_1.jpg"><br>纵横交叉算法是一种新型的群体智能搜索算法，<br>据<a target="_blank" rel="noopener" href="http://kns.cnki.net/kcms/detail/detail.aspx?FileName=SJES14061700208503&DBName=SJES&DBCode=SJES&v=Mjc1MDZyaTNXY3hEOGVXUUwzd1plWnVIaW5oVTdiSUoxb1JhUlE9TmlmT2ZiSzhIdGZOcUk5Rlp1c0hDWHc2b0JFYTYwdDRUZw==">知网可查</a>，该算法好像由2014年出自广东工业大学。</p>
+<span id="more"></span>
+<p>纵横交叉算法受孔子中庸思想和遗传算法的启发，采用双向搜索机制，即横向交叉和纵向交叉。<br>在父代种群进化迭代的过程中分别在横向和纵向两个方向各自产生中庸解，并通过竞争机制与父代进行竞争，优胜者保留作为新的父代，适应度较差的将被淘汰，<br>竞争机制可以保证种群中的个体粒子始终维持历史上的最优，且这种迭代方式可以大大加速种群的收敛速度。</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>种群由个体例子组成，搜寻方式为双向交叉，<br>迭代过程由两种交叉方式在每代中交替进行，<br>每次迭代进行竞争，择优保留位新的种群。</p>
+<p>算法流程图如下：<br><img src="/assets/images/180524_2.jpg">  </p>
+<h2 id="横向交叉"><a href="#横向交叉" class="headerlink" title="横向交叉"></a>横向交叉</h2><p>横向交叉是在群体中两个不同个体粒子所有维之间进行一种算数交叉。</p>
+<ol>
+<li>获取父代种群X，种群规模大小为矩阵X的行数M，问题解空间的维数为矩阵X的列数D；</li>
+<li>对父代种群X中所有个体粒子不重复随机配对，方法为：在1至N_1之间产生N_1个不重复的整数系列，将配对序号保存在矩阵B中；</li>
+<li>从矩阵B中去处相邻两个数作为父代配对例子的编号i，j;</li>
+<li>父代粒子X(i)和X(j)在第d维进行横向交叉运算，则它的子代繁殖采用如下公式：<br><img src="/assets/images/180524_3.jpg"><br>式中，r是[0，1]上均匀分布的随机数；c是[-1,1]上均匀分布的随机数；X(i,d)和X(j,d)分别是父代种群中的个体粒子X(i)和X(j)的第d维；MS_{(hc)}分别是X(i,d)和X(j,d)通过横向交叉产生的第d维子代。</li>
+<li>重复步骤3和步骤4，最终获得横向交叉产生的中庸解，保存在中庸解矩阵MS_{(hc)}中；</li>
+<li>执行竞争，获取横向交叉占优解，保存在DS_{(hc)}中。</li>
+</ol>
+<p>横向交叉始终在内部空间以较大的概率进行搜索，而对其外圈空间则以线性减少的概率进行搜索。</p>
+<h2 id="纵向交叉"><a href="#纵向交叉" class="headerlink" title="纵向交叉"></a>纵向交叉</h2><p>纵向交叉是种群每个个体不同维之间所产生的交叉运算。</p>
+<ol>
+<li>获取父代种群X(横向交叉产生的占优解)，种群规模大小为矩阵X的行数M，问题解空间的维数为矩阵X的列数D</li>
+<li>对父代种群X每一维进行归一化操作；</li>
+<li>对种群中所有的维进行不重复两两随机配对，方法为：在1至N_2之间产生N_2个不重复的整数系列，将配对序号保存在矩阵B中；</li>
+<li>按顺序从矩阵B中取出相邻两个数即为配对的维序号d_1,d_2;</li>
+<li>在纵向交叉概率为P_{(vc)}条件下，种群中所有的个体X(i)。根据公式产生子代:<br><img src="/assets/images/180524_4.jpg"><br>式中MS_{(vc)}(i,d_1)是个体X(i)的第d_1维和第d_2维通过纵向交叉产生的第d_1维子代。</li>
+<li>重复步骤4和步骤5；</li>
+<li>对MS_{(vc)}进行反归一化操作，最终获得纵向交叉产生的中庸解，保存在中庸解矩阵中；</li>
+<li>执行竞争，获取纵向交叉占优解，保存在DS_{(vc)}中。</li>
+</ol>
+<p>纵向交叉发生在同一个体不同维之间，能有效防止维局部最优。防止不同维变量交叉超出维度限定，需要归一化处理。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"><i class="fa fa-tag"></i> 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/05/04/SS%E5%8A%A0%E9%80%9FKCPTun%E7%AF%87/" rel="prev" title="SS加速KCPTun篇">
+      <i class="fa fa-chevron-left"></i> SS加速KCPTun篇
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/06/05/%E7%B2%92%E5%AD%90%E7%BE%A4%E7%AE%97%E6%B3%95/" rel="next" title="粒子群算法">
+      粒子群算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%AA%E5%90%91%E4%BA%A4%E5%8F%89"><span class="nav-number">1.1.</span> <span class="nav-text">横向交叉</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%B5%E5%90%91%E4%BA%A4%E5%8F%89"><span class="nav-number">1.2.</span> <span class="nav-text">纵向交叉</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sinclaired"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Sinclaired</p>
+  <div class="site-description" itemprop="description">自言自语</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:sinclairdsc@gmail.com" title="E-Mail → mailto:sinclairdsc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/sinsclairdsc" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;sinsclairdsc" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinclaired</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'cfnbMzAmH45nnAc6GBxQKdO7-gzGzoHsz',
+      appKey     : 'F7PrRb1wkPqMTESyXNYe7Ofr',
+      placeholder: "欢迎评论！",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

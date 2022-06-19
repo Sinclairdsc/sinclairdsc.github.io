@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sinclairdsc.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="博客之前一直没有评论系统，因为刚建博客的时候，市面上还能用的只有畅言和Disqus，而Disqus需要魔法，畅言需要备案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给Hexo添加Valine评论">
+<meta property="og:url" content="http://sinclairdsc.github.io/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/index.html">
+<meta property="og:site_name" content="Sinclaird Blog">
+<meta property="og:description" content="博客之前一直没有评论系统，因为刚建博客的时候，市面上还能用的只有畅言和Disqus，而Disqus需要魔法，畅言需要备案。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/200113_1.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/200113_2.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/200113_3.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/200113_4.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/200113_5.jpg">
+<meta property="article:published_time" content="2020-01-13T13:03:28.000Z">
+<meta property="article:modified_time" content="2021-11-28T14:50:33.912Z">
+<meta property="article:author" content="Sinclaired">
+<meta property="article:tag" content="Hexo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sinclairdsc.github.io/assets/images/200113_1.jpg">
+
+<link rel="canonical" href="http://sinclairdsc.github.io/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>给Hexo添加Valine评论 | Sinclaird Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sinclaird Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Things do not change, we do.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://sinclairdsc.github.io/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Sinclaired">
+      <meta itemprop="description" content="自言自语">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sinclaird Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          给Hexo添加Valine评论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-13 21:03:28" itemprop="dateCreated datePublished" datetime="2020-01-13T21:03:28+08:00">2020-01-13</time>
+            </span>
+
+          
+            <span id="/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/" class="post-meta-item leancloud_visitors" data-flag-title="给Hexo添加Valine评论" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/01/13/%E7%BB%99Hexo%E6%B7%BB%E5%8A%A0Valine%E8%AF%84%E8%AE%BA/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>博客之前一直没有评论系统，因为刚建博客的时候，市面上还能用的只有畅言和Disqus，而Disqus需要魔法，畅言需要备案。</p>
+<span id="more"></span>
+<p>后来出了个Gitment，是基于GitHub的，但也需要有账号才能评论，所以一直没去搞，直到前几天发现一个新的评论系统<a target="_blank" rel="noopener" href="https://valine.js.org/">Valine</a>，它不需要后端，而且支持Emoji，马上搞起。</p>
+<blockquote>
+<p>Valine 诞生于2017年8月7日，是一款基于LeanCloud的快速、简洁且高效的无后端评论系统。</p>
+</blockquote>
+<blockquote>
+<p>理论上支持但不限于静态博客，目前已有Hexo、Jekyll、Typecho、Hugo、Ghost 等博客程序在使用Valine。</p>
+</blockquote>
+<p>我的博客基于Hexo，以下教程针对Hexo博客，参考<a target="_blank" rel="noopener" href="https://github.com/litten/hexo-theme-yilia/pull/646">yilia大佬的教程</a>。</p>
+<p>因为Valine是基于<a target="_blank" rel="noopener" href="https://www.leancloud.cn/">LeanCloud</a>的，所以我们需要先在官网上注册一个账号，如果只是想用Valine的评论功能，那这个LeanCloud可以简单看作为一个存储评论的仓库。</p>
+<p>1.注册成功后，进入控制台，随便创建一个应用；<br><img src="/assets/images/200113_1.jpg"><br>2.进入设置，点击左侧应用Keys，记录一下AppID和AppKey；<br><img src="/assets/images/200113_2.jpg"><br>3.点击左侧安全中心，因为只是用来存储评论，所以关掉其他功能；<br><img src="/assets/images/200113_3.jpg"><br>4.在下方Web安全域名处添加你的博客域名，防止记录到别的网站评论；<br><img src="/assets/images/200113_4.jpg"><br>5.在Hexo博客主题的配置文件_config.yml中添加如下代码；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">valine: </span><br><span class="line"> appid: <span class="string">&#x27;步骤2记录的AppID&#x27;</span></span><br><span class="line"> appkey: <span class="string">&#x27;步骤2记录的AppKey&#x27;</span></span><br><span class="line"> verify: <span class="literal">false</span></span><br><span class="line"> notify: <span class="literal">false</span></span><br><span class="line"> avatar: mm</span><br><span class="line"> placeholder: <span class="string">&#x27;评论框占位符&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>6.在主题文件layout/_partial/article.ejs中添加如下代码；</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">  &lt;% <span class="keyword">if</span> (theme.valine &amp;&amp; theme.valine.appid &amp;&amp; theme.valine.appkey)&#123; %&gt;</span><br><span class="line">    &lt;section <span class="built_in">id</span>=<span class="string">&quot;comments&quot;</span> style=<span class="string">&quot;margin:10px;padding:10px;background:#fff;&quot;</span>&gt;</span><br><span class="line">      &lt;%- partial(<span class="string">&#x27;post/valine&#x27;</span>, &#123;</span><br><span class="line">        key: post.slug,</span><br><span class="line">        title: post.title,</span><br><span class="line">        url: config.url+url_for(post.path)</span><br><span class="line">        &#125;) %&gt;</span><br><span class="line">    &lt;/section&gt;</span><br><span class="line">  &lt;% &#125; %&gt;</span><br><span class="line">&lt;% &#125; %&gt;</span><br></pre></td></tr></table></figure>
+
+<p>7.在主题文件layout/_partial/post/内新建valine.ejs文件，代码如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;div <span class="built_in">id</span>=<span class="string">&quot;vcomment&quot;</span> class=<span class="string">&quot;comment&quot;</span>&gt;&lt;/div&gt; </span><br><span class="line">&lt;script src=<span class="string">&quot;//cdn1.lncld.net/static/js/3.0.4/av-min.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=<span class="string">&quot;//unpkg.com/valine/dist/Valine.min.js&quot;</span>&gt;&lt;/script&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">   var notify = <span class="string">&#x27;&lt;%= theme.valine.notify %&gt;&#x27;</span> == <span class="literal">true</span> ? <span class="literal">true</span> : <span class="literal">false</span>;</span><br><span class="line">   var verify = <span class="string">&#x27;&lt;%= theme.valine.verify %&gt;&#x27;</span> == <span class="literal">true</span> ? <span class="literal">true</span> : <span class="literal">false</span>;</span><br><span class="line">    window.onload = <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">        new Valine(&#123;</span><br><span class="line">            el: <span class="string">&#x27;.comment&#x27;</span>,</span><br><span class="line">            notify: notify,</span><br><span class="line">            verify: verify,</span><br><span class="line">            app_id: <span class="string">&quot;&lt;%= theme.valine.appid %&gt;&quot;</span>,</span><br><span class="line">            app_key: <span class="string">&quot;&lt;%= theme.valine.appkey %&gt;&quot;</span>,</span><br><span class="line">            placeholder: <span class="string">&quot;&lt;%= theme.valine.placeholder %&gt;&quot;</span>,</span><br><span class="line">            avatar:<span class="string">&quot;&lt;%= theme.valine.avatar %&gt;&quot;</span></span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p>8.重新编译下Hexo，评论系统就完成了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>目前评论系统的头像是基于<a target="_blank" rel="noopener" href="http://cn.gravatar.com/">Gravatar</a>的，如果想使用自己的头像，需要自行注册，在评论的时候填写注册邮箱即可。</p>
+<p>默认的匿名头像由如下7种，可自行修改步骤5中的avatar: mm；<br><img src="/assets/images/200113_5.jpg"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Hexo/" rel="tag"><i class="fa fa-tag"></i> Hexo</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/11/%E5%8D%B8%E8%BD%BD%E9%A1%BD%E5%9B%BA%E8%BD%AF%E4%BB%B6%E7%94%A8%E5%BE%97%E4%B8%8A/" rel="prev" title="卸载顽固软件">
+      <i class="fa fa-chevron-left"></i> 卸载顽固软件
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/29/%E6%9B%B4%E6%8D%A2Hexo%E5%8D%9A%E5%AE%A2%E9%83%A8%E7%BD%B2%E6%96%B9%E5%BC%8F/" rel="next" title="更换Hexo博客部署方式">
+      更换Hexo博客部署方式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sinclaired"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Sinclaired</p>
+  <div class="site-description" itemprop="description">自言自语</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:sinclairdsc@gmail.com" title="E-Mail → mailto:sinclairdsc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/sinsclairdsc" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;sinsclairdsc" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinclaired</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'cfnbMzAmH45nnAc6GBxQKdO7-gzGzoHsz',
+      appKey     : 'F7PrRb1wkPqMTESyXNYe7Ofr',
+      placeholder: "欢迎评论！",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
