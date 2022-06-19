@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sinclairdsc.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近用到一些MATLAB画图命令，每次都查还是有些麻烦，于是将用过的程序总结一下，记录于此。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些常用MatLab画图指令">
+<meta property="og:url" content="http://sinclairdsc.github.io/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Sinclaird Blog">
+<meta property="og:description" content="最近用到一些MATLAB画图命令，每次都查还是有些麻烦，于是将用过的程序总结一下，记录于此。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_1.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_2.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_3.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_4.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_5.jpg">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/180211_6.jpg">
+<meta property="article:published_time" content="2018-02-11T08:38:29.000Z">
+<meta property="article:modified_time" content="2021-11-28T14:49:43.477Z">
+<meta property="article:author" content="Sinclaired">
+<meta property="article:tag" content="MatLab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sinclairdsc.github.io/assets/images/180211_1.jpg">
+
+<link rel="canonical" href="http://sinclairdsc.github.io/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>一些常用MatLab画图指令 | Sinclaird Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sinclaird Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Things do not change, we do.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://sinclairdsc.github.io/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Sinclaired">
+      <meta itemprop="description" content="自言自语">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sinclaird Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一些常用MatLab画图指令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-02-11 16:38:29" itemprop="dateCreated datePublished" datetime="2018-02-11T16:38:29+08:00">2018-02-11</time>
+            </span>
+
+          
+            <span id="/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/" class="post-meta-item leancloud_visitors" data-flag-title="一些常用MatLab画图指令" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/02/11/%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8MatLab%E7%94%BB%E5%9B%BE%E6%8C%87%E4%BB%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="/assets/images/180211_1.jpg"><br>最近用到一些MATLAB画图命令，每次都查还是有些麻烦，<br>于是将用过的程序总结一下，记录于此。</p>
+<span id="more"></span>
+<p>以一个简单的正弦波为例，画出它的时域波形和频域波形，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">clear all;                  %清除记录</span><br><span class="line">N=2000;                     %获得信号的点数</span><br><span class="line">fs=1000;                    %抽样频率，要高于信号最高频率的2倍</span><br><span class="line">t=(0:N-1)/fs;               %信号时域横轴向量</span><br><span class="line">f=(0:N-1)*fs/N;             %信号频域横轴向量</span><br><span class="line">x=2*sin(10*pi*2*t);</span><br><span class="line">figure(&#x27;name&#x27;,&#x27;时域图&#x27;);     %出图</span><br><span class="line">plot(t,x);</span><br><span class="line">figure(&#x27;name&#x27;,&#x27;频域图&#x27;);     %出图</span><br><span class="line">y=abs(fft(x));</span><br><span class="line">plot(f,y);</span><br></pre></td></tr></table></figure>
+<p>结果如图：<br><img src="/assets/images/180211_2.jpg"><br><img src="/assets/images/180211_3.jpg"></p>
+<p>因为频率图横坐标太宽，所以啥都看不出来，<br>如果要调整一下曲线，只需在plot后面加上其他语句就行。</p>
+<p>限制下频率的横纵坐标，前两个数是横坐标起止，后两个数是纵坐标起止；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">axis([0 20 0 2000]);</span><br></pre></td></tr></table></figure>
+
+<p>给时域横纵坐标都加个标签，前一个是横坐标标签，后一个是纵坐标标签；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xlabel(&#x27;时间/s&#x27;);ylabel(&#x27;幅度&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>给图加一个标题；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">title(&#x27;时域&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>给曲线加上网格线；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grid on;</span><br></pre></td></tr></table></figure>
+
+<p>曲线加颜色并加粗，LineWidth后的数字代表线条粗细；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">plot(t,x,&#x27;r&#x27;,&#x27;LineWidth&#x27;,2);</span><br><span class="line">plot(f,y,&#x27;g&#x27;,&#x27;LineWidth&#x27;,2);</span><br></pre></td></tr></table></figure>
+
+<p>颜色对应：<br>‘r’ 红色 ‘m’ 粉红 ‘g’ 绿色 ‘c’ 青色<br>‘b’ 兰色 ‘w’ 白色 ‘y’ 黄色 ‘k’ 黑色</p>
+<p>结果如图：<br><img src="/assets/images/180211_4.jpg"><br><img src="/assets/images/180211_5.jpg"></p>
+<p>将两种波形显示在一张图上subplot(行数，列数，序号数)；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">subplot(2,1,1)   </span><br><span class="line">plot(t,x,&#x27;r&#x27;,&#x27;LineWidth&#x27;,2);</span><br><span class="line">subplot(2,1,1)   </span><br><span class="line">plot(f,y,&#x27;g&#x27;,&#x27;LineWidth&#x27;,2);</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/images/180211_6.jpg"></p>
+<p>将两种波形显示在一个坐标系内，只需在plot后加俩单词就行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hold on;</span><br></pre></td></tr></table></figure>
+
+<p>先记到这，后面用到再补充。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/MatLab/" rel="tag"><i class="fa fa-tag"></i> MatLab</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/09/28/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E5%85%AD/" rel="prev" title="笔记-吴恩达deeplearning之六">
+      <i class="fa fa-chevron-left"></i> 笔记-吴恩达deeplearning之六
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/16/GitHub%E7%AE%80%E6%98%93%E6%8C%87%E5%8D%97/" rel="next" title="GitHub简易指南">
+      GitHub简易指南 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sinclaired"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Sinclaired</p>
+  <div class="site-description" itemprop="description">自言自语</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:sinclairdsc@gmail.com" title="E-Mail → mailto:sinclairdsc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/sinsclairdsc" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;sinsclairdsc" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinclaired</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'cfnbMzAmH45nnAc6GBxQKdO7-gzGzoHsz',
+      appKey     : 'F7PrRb1wkPqMTESyXNYe7Ofr',
+      placeholder: "欢迎评论！",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

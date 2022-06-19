@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"sinclairdsc.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="神经网络的改变会涉及到许多不同的超参数设置，对于超参数而言，系统地组织调试过程，能更加方便有效的找到合适的超参数设定值。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="笔记-吴恩达deeplearning之五">
+<meta property="og:url" content="http://sinclairdsc.github.io/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/index.html">
+<meta property="og:site_name" content="Sinclaird Blog">
+<meta property="og:description" content="神经网络的改变会涉及到许多不同的超参数设置，对于超参数而言，系统地组织调试过程，能更加方便有效的找到合适的超参数设定值。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170921_1.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170921_2.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170921_3.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170921_4.JPG">
+<meta property="og:image" content="http://sinclairdsc.github.io/assets/images/170921_5.JPG">
+<meta property="article:published_time" content="2017-09-21T12:13:03.000Z">
+<meta property="article:modified_time" content="2021-11-28T14:49:15.297Z">
+<meta property="article:author" content="Sinclaired">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://sinclairdsc.github.io/assets/images/170921_1.JPG">
+
+<link rel="canonical" href="http://sinclairdsc.github.io/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>笔记-吴恩达deeplearning之五 | Sinclaird Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Sinclaird Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Things do not change, we do.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://sinclairdsc.github.io/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Sinclaired">
+      <meta itemprop="description" content="自言自语">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Sinclaird Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          笔记-吴恩达deeplearning之五
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-21 20:13:03" itemprop="dateCreated datePublished" datetime="2017-09-21T20:13:03+08:00">2017-09-21</time>
+            </span>
+
+          
+            <span id="/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/" class="post-meta-item leancloud_visitors" data-flag-title="笔记-吴恩达deeplearning之五" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/09/21/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E4%BA%94/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>神经网络的改变会涉及到许多不同的超参数设置，<br>对于超参数而言，系统地组织调试过程，<br>能更加方便有效的找到合适的超参数设定值。</p>
+<span id="more"></span>
+<h1 id="超参数的选取"><a href="#超参数的选取" class="headerlink" title="超参数的选取"></a>超参数的选取</h1><p>关于训练深度最难的事情之一，是需要处理的参数的数量，<br>学习速率是需要调试的参数中最重要的参数，<br>还有一些参数，如Momentum参数、mini batch大小、隐藏单元，重要程度次一级，<br>其他因素的重要性排第三，如层数、学习衰减率等<br><img src="/assets/images/170921_1.JPG"><br>在早一代的机器学习算法中，比如你有两个超参数，<br>常见的做法是在网格中取样点，然后系统的研究这些数值，<br>尝试过所有的参数后，选择出效果最好的一组参数。</p>
+<p>在深度学习领用，我们常做的是随机选择点，<br>接着用这些随机选取的点试验超参数的效果，<br>之所以这么做，是因为很难提前预测哪个超参数更适合。</p>
+<p>选择超参数时，另一个惯例是采用由粗糙到精细的策略，<br>先在大范围内进行取值，选择出大范围内最好的点，<br>或许该点周围还有效果更好的点，接下来，选中这块区域，<br>然后在其中更密集地取值或随机取值，通常更为有效。</p>
+<p>关于搜索超参数的过程，大致有两种思想流派：</p>
+<p>一种是时常照看一个模型，通常是有庞大的数据组，<br>但没有许多计算资源或足够的CPU和GPU的前提下，<br>即当它在试验时，你也可以定期逐渐改良超参数的设定，<br>直至达到想要的结果。</p>
+<p>另一种是同时试验多种不同超参数设定的模型，<br>前提是拥有足够计算资源或CPU和GPU，<br>然后在训练结束，快速选择出工作效果最好的那个。</p>
+<p>这两种方式的选择，主要取决于拥有的计算资源。</p>
+<h1 id="Batch归一化"><a href="#Batch归一化" class="headerlink" title="Batch归一化"></a>Batch归一化</h1><p>在深度学习兴起后，最重要的一个思想是它的一种算法，<br>叫Batch归一化，它会使你的参数搜索问题变得很容易。<br>使神经网络对超参数的选择更加稳定，范围更庞大，工作效果也很好。</p>
+<p>当训练一个模型，比如Logistic回归时，归一化输入特征(输入样本减去平均数后再除以方差)可以加速学习过程，更易于算法优化。</p>
+<p>那么对于更深的模型，没有输入特征值x，但有激活值a^{[L]}时，<br>如果想训练这些参数，比如w^{3},b^{3}，那归一化a^{[2]}的平均值和方差，<br>以便使w^{3},b^{3}的训练更有意义。</p>
+<p>简单来说Batch归一化的作用就是，对于任何一个隐藏层而言，归一化a的值，能够以更快的速度来训练下一层的参数。<br>严格的来说，我们真正归一化的不是a，而是z。</p>
+<h3 id="Batch归一化的使用"><a href="#Batch归一化的使用" class="headerlink" title="Batch归一化的使用"></a>Batch归一化的使用</h3><p>在神经网络中，已知一些中间值，假设有一些隐藏单元值，从z^{(1)}到z^{(m)}，<br>如下，首先计算平均值，接着计算方差，然后规范化z^{(i)}，<br><img src="/assets/images/170921_2.JPG"><br>现在我们已经将这些z值标准化，使其含平均值0和标准单位方差，<br>所以z的每一个分量都含有平均值0和方差1，<br>或许我们需要隐藏单元有不同的分布，所以还需计算，<br><img src="/assets/images/170921_3.JPG"><br>通过对\gamma ,\beta的合理设置，可以构造含其他平均值和方差的隐藏单元值。</p>
+<p>Batch归一化的作用不止适用于输入层，同样适用于神经网络中的深度隐藏层。</p>
+<p>假设有如上神经网络，每个节点进行两步计算，<br>如果没有进行Batch归一化，z将直接输入激活函数得到a，<br>否则，Batch归一化发生在z和a之间，</p>
+<p>接下来可以任意选择需要的的优化算法。</p>
+<p>使用中Batch归一化通常和训练集的mini-batch一起使用</p>
+<p>用第一个mini-batch上计算出z^{[1]}，<br>接着Batch归一化，然后再正想传播求得z^{[2]}，<br>反向传播后，用梯度下降法更新参数，<br>这些都第一个mini-batch上进行的一步梯度下降法，</p>
+<p>之后在第二个mini-batch上计算出z^{[1]}，<br>然后在此步中使数据Batch归一化，<br>如上依此类推，<br>也可尝试其他算法来对参数进行更新。</p>
+<h1 id="Softmax回归"><a href="#Softmax回归" class="headerlink" title="Softmax回归"></a>Softmax回归</h1><p>该回归能够对多个分类进行预测，而不是之前的两个分类，<br>关于Softmax激活函数，对于Softmax层而言，</p>
+<p>首先计算一个临时变量t，t=e^{z^{[L]}}，就是对所有元素求幂，<br>接着对t归一化，求得a^{[L]}=\frac{e^{z^{[L]}}}{\sum_{j=1}^{n} t_i}<br>即a^{[L]}可以表示样本属于各分类的可能性</p>
+<p>整个计算过程，从计算幂，到得出临时变量t，再归一化，<br>将此概括为一个Softmax激活函数。</p>
+<p><img src="/assets/images/170921_4.JPG"><br>例如一个神经网络输出层计算出z，有四个分类，即z为4*1维向量，<br>计算临时变量t，对元素进行幂运算。<br>最后，令输出层激活函数为Softmax激活函数，输出g，且总和为1。</p>
+<p>对于四分类问题，损失函数一般如下，<br>l(\hat{y},y)=- \sum_{j=1}^{4} j_ilog\hat{y}_j</p>
+<h1 id="TensorFlow"><a href="#TensorFlow" class="headerlink" title="TensorFlow"></a>TensorFlow</h1><p>假设你有一个损失函数J需要最小话，J(w)=w^2-20w+25<br>使用TensorFlow将其最小化<br><img src="/assets/images/170921_5.JPG"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/09/19/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E5%9B%9B/" rel="prev" title="笔记-吴恩达deeplearning之四">
+      <i class="fa fa-chevron-left"></i> 笔记-吴恩达deeplearning之四
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/09/28/%E7%AC%94%E8%AE%B0-%E5%90%B4%E6%81%A9%E8%BE%BEdeeplearning%E4%B9%8B%E5%85%AD/" rel="next" title="笔记-吴恩达deeplearning之六">
+      笔记-吴恩达deeplearning之六 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B6%85%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">超参数的选取</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Batch%E5%BD%92%E4%B8%80%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">Batch归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Batch%E5%BD%92%E4%B8%80%E5%8C%96%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">2.0.1.</span> <span class="nav-text">Batch归一化的使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Softmax%E5%9B%9E%E5%BD%92"><span class="nav-number">3.</span> <span class="nav-text">Softmax回归</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TensorFlow"><span class="nav-number">4.</span> <span class="nav-text">TensorFlow</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Sinclaired"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Sinclaired</p>
+  <div class="site-description" itemprop="description">自言自语</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:sinclairdsc@gmail.com" title="E-Mail → mailto:sinclairdsc@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://instagram.com/sinsclairdsc" title="Instagram → https:&#x2F;&#x2F;instagram.com&#x2F;sinsclairdsc" rel="noopener" target="_blank"><i class="fab fa-instagram fa-fw"></i>Instagram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Sinclaired</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'cfnbMzAmH45nnAc6GBxQKdO7-gzGzoHsz',
+      appKey     : 'F7PrRb1wkPqMTESyXNYe7Ofr',
+      placeholder: "欢迎评论！",
+      avatar     : 'retro',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
